@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import 'express-async-errors';
 import { PrismaClient } from '@prisma/client';
+import apiRoutes from './routes/index';
+import { errorHandler, notFoundHandler } from './middlewares/error.middleware';
 
 const prisma = new PrismaClient();
 const app = express();
@@ -22,16 +24,12 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// API Routes (to be implemented)
-app.use('/api/auth', require('./routes/auth').default || require('./routes/auth'));
+// API Routes
+app.use('/api', apiRoutes);
 
 // Error handling
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err);
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal Server Error'
-  });
-});
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 // Start server
 const start = async () => {
@@ -40,8 +38,16 @@ const start = async () => {
     console.log('✓ Database connected');
     
     app.listen(PORT, () => {
-      console.log(`\n🚀 PDV Backend running on http://localhost:${PORT}\n`);
+      console.log(`\n🚀 PDV Backend running on http://localhost:${PORT}`);
       console.log(`📚 API Documentation: http://localhost:${PORT}/api/docs\n`);
+      console.log('Available endpoints:');
+      console.log('  POST   /api/auth/login');
+      console.log('  POST   /api/auth/register');
+      console.log('  GET    /api/auth/me');
+      console.log('  GET    /api/products');
+      console.log('  GET    /api/products/search');
+      console.log('  GET    /api/customers');
+      console.log('  POST   /api/customers\n');
     });
   } catch (error) {
     console.error('✗ Failed to start server:', error);
