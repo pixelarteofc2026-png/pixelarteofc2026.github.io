@@ -4,7 +4,10 @@ import { Layout } from '@/layouts/Layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { LoginPage } from '@/pages/LoginPage';
 import { DashboardPage } from '@/pages/DashboardPage';
+import { PDVPage } from '@/pages/PDVPage';
 import { ProdutosPage } from '@/pages/ProdutosPage';
+import { ClientesPage } from '@/pages/ClientesPage';
+import { RelatoriosPage } from '@/pages/RelatoriosPage';
 import '@/styles/global.css';
 
 function App() {
@@ -25,9 +28,20 @@ function App() {
         />
 
         <Route
-          path="/produtos"
+          path="/pdv"
           element={
             <ProtectedRoute>
+              <Layout>
+                <PDVPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/produtos"
+          element={
+            <ProtectedRoute requiredRole="ADMIN">
               <Layout>
                 <ProdutosPage />
               </Layout>
@@ -35,7 +49,30 @@ function App() {
           }
         />
 
+        <Route
+          path="/clientes"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ClientesPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/relatorios"
+          element={
+            <ProtectedRoute requiredRole="ADMIN">
+              <Layout>
+                <RelatoriosPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
   );
